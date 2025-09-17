@@ -1,0 +1,320 @@
+{
+	"info": {
+		"_postman_id": "b086b873-8f5c-4587-bdf1-32e779bec463",
+		"name": "GetPutChaining-GoRestAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28413036"
+	},
+	"item": [
+		{
+			"name": "GetAllUsers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"const userIDs = response.map(user => user.id);\r",
+							"console.log(\"user IDs ====> \" +  userIDs);\r",
+							"\r",
+							"pm.variables.set(\"UserIDs\", userIDs);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{baseURL}}/public/v2/users",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateUsers",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let userId;\r",
+							"// const UserID = userIDs.shift();\r",
+							"// pm.variables.set(\"UserIDs\",userIDs);\r",
+							"// console.log(\"Current userID ===> \" + UserID);\r",
+							"\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"    url: pm.environment.get(\"baseURL\") + \"/public/v2/users/\",\r",
+							"    method: \"GET\"\r",
+							"    },\r",
+							"    function(err, response){\r",
+							"        if (err) {\r",
+							"            console.log(\"Error while fetching users ===> \", err)\r",
+							"        }\r",
+							"        const userIDs = response.json().map(user => user.id);\r",
+							"        pm.variables.set(\"UserIDs\",userIDs);\r",
+							"        console.log(\"All user ids ===> \",userIDs);\r",
+							"        userId = userIDs.shift();\r",
+							"        pm.variables.set(\"userID\",userId);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const userIDs = pm.variables.get(\"UserIDs\");\r",
+							"let name = \"Anusha Bellala\";\r",
+							"let status = \"active\";\r",
+							"let gender = \"female\";\r",
+							"\r",
+							"if(userIDs.length > 0 && Array.isArray(userIDs))\r",
+							"{\r",
+							"    userIDs.forEach(user => {\r",
+							"        pm.sendRequest(\r",
+							"            {\r",
+							"                url: pm.environment.get(\"baseURL\") + \"/public/v2/users/\" + user,\r",
+							"                method: 'PUT',\r",
+							"                header:{\r",
+							"                    'Content-Type' : 'application/json',\r",
+							"                    'Authorization': pm.environment.get(\"AuthToken\")  \r",
+							"                },\r",
+							"                body:{\r",
+							"                    mode: \"raw\",\r",
+							"                    raw: JSON.stringify({\r",
+							"                        \"name\" : name,\r",
+							"                        \"status\": status,\r",
+							"                        \"gender\": gender\r",
+							"                    })\r",
+							"                }\r",
+							"            },\r",
+							"            function (err, resp)\r",
+							"            {\r",
+							"                if(err){\r",
+							"                    console.log(\"Error in updating user\", err);\r",
+							"                }\r",
+							"                const response = resp.json();\r",
+							"                pm.test(\"Response should be 200 and message is OK\", function(){\r",
+							"                    pm.expect(resp).to.have.status(200);\r",
+							"                    //reponse mesage should be OK\r",
+							"                    pm.expect(resp.status).to.eql(\"OK\");\r",
+							"                });\r",
+							"                pm.test(\"Data in response and request body are same\", function(){\r",
+							"                    pm.expect(response.id).to.equal(user);\r",
+							"                    pm.expect(response.name).to.equal(name);\r",
+							"                    pm.expect(response.status).to.equal(status);\r",
+							"                    pm.expect(response.gender).to.equal(gender);\r",
+							"                });\r",
+							"\r",
+							"            })\r",
+							"    })\r",
+							"}\r",
+							"else{\r",
+							"    console.log(\"All user Ids are updated\");\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AuthToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"Anusha Bellala\",\r\n    \"status\": \"active\",\r\n    \"gender\": \"male\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/public/v2/users/{{userID}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{userID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllUsersAfterUpdate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"const userIDs = response.map(user => user.id);\r",
+							"console.log(\"user IDs ====> \" +  userIDs);\r",
+							"\r",
+							"pm.variables.set(\"UserIDs\", userIDs);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{baseURL}}/public/v2/users",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateUser",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\r",
+							"    key: \"Authorization\",\r",
+							"    value: \"{{AuthToken}}\"\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const payload = JSON.parse(pm.request.body.raw);\r",
+							"console.log(\"Payload ===> \" + JSON.stringify(payload));\r",
+							"const expectedname = payload.name;\r",
+							"const expectedEmail = payload.email;\r",
+							"\r",
+							"console.log(\"Expected Name ===> \" + expectedname);\r",
+							"console.log(\"Expected Email ===> \" + expectedEmail);\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"console.log(\"Response ===> \" + JSON.stringify(response));\r",
+							"\r",
+							"\r",
+							"const actualname = response.name;\r",
+							"console.log(\"Actual Name ===> \" + actualname);\r",
+							"\r",
+							"pm.test(\"Check if the name in the response matches the name in the payload\", function() {\r",
+							"    pm.expect(actualname).to.eql(expectedname);\r",
+							"});\r",
+							"\r",
+							"const actualEmail = response.email;\r",
+							"console.log(\"Actual Email ===> \" + actualEmail);\r",
+							"\r",
+							"// pm.test(\"Test email ends with anusha\", function(){\r",
+							"//     pm.expect(actualEmail)\r",
+							"//         .to.match(/anusha$/);\r",
+							"// })\r",
+							"\r",
+							"pm.test(\"Test email contains anusha\", function(){\r",
+							"    pm.expect(actualEmail)\r",
+							"    .contains(\"anusha\")\r",
+							"})\r",
+							"// pm.test(\"Test email starts with anusha\", function(){\r",
+							"//     pm.expect(actualEmail)\r",
+							"//         .to.match(/^anusha/);\r",
+							"// })\r",
+							"\r",
+							"pm.test(\"Test email in response matches email from request\", function(){\r",
+							"    pm.expect(actualEmail)\r",
+							"        .to.eql(expectedEmail);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomUserName}}\",\r\n    \"email\": \"{{$randomUserName}}.anusha@gmail.com\",\r\n    \"gender\": \"female\",\r\n    \"status\": \"active\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/public/v2/users",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,62 @@
+{
+	"info": {
+		"_postman_id": "7548f14f-7614-4a79-81cd-1d5079094910",
+		"name": "RunTestsMultipleTimesUsingFiles",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28413036"
+	},
+	"item": [
+		{
+			"name": "UsingCSVFile",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"firstName\", pm.iterationData.get(\"firstname\"));\r",
+							"pm.variables.set(\"lastName\", pm.iterationData.get(\"lastname\"));\r",
+							"pm.variables.set(\"totalPrice\", pm.iterationData.get(\"totalprice\"));\r",
+							"pm.variables.set(\"depositPaid\", pm.iterationData.get(\"depositpaid\"));\r",
+							"pm.variables.set(\"check-in-date\", pm.iterationData.get(\"checkindate\"));\r",
+							"pm.variables.set(\"check-out-date\", pm.iterationData.get(\"checkoutdate\"));\r",
+							"pm.variables.set(\"additionalNeeds\", pm.iterationData.get(\"additionalneeds\"));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\" : \"{{firstName}}\",\n    \"lastname\" : \"{{lastName}}\",\n    \"totalprice\" : \"{{totalPrice}}\",\n    \"depositpaid\" : \"{{depositPaid}}\",\n    \"bookingdates\" : {\n        \"checkin\" : \"{{check-in-date}}\",\n        \"checkout\" : \"{{check-out-date}}\"\n    },\n    \"additionalneeds\" : \"{{additionalNeeds}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
