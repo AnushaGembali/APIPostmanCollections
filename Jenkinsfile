@@ -16,12 +16,12 @@ pipeline {
 
         stage('Pull Image from Docker') {
             steps {
-                bat 'docker pull anushabellala/datadriventest:1.0'
+                sh 'docker pull anushabellala/datadriventest:1.0'
             }
         }
         stage('Run api test cases') {
             steps {
-				bat 'docker run --rm -v $(pwd)/newman:/app/results/ anushabellala/datadriventest:1.0'
+				sh 'docker run --rm -v $(pwd)/newman:/app/results/ anushabellala/datadriventest:1.0'
             }
         }
         stage('Publish HTML Extra Report'){
