@@ -13,7 +13,11 @@ pipeline {
                 echo("deploy to qa")
             }
         }
-
+		stage('Prepare Newman Results Directory') {
+            steps {
+                sh 'mkdir -p $(pwd)/newman' 
+            }
+        }
         stage('Pull Image from Docker') {
             steps {
                 sh 'docker pull anushabellala/datadriventest:1.0'
