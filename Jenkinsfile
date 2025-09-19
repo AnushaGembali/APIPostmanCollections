@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Run api test cases') {
             steps {
-				bat 'docker run -v %cd%\newman:/app/results/ anushabellala/datadriventest:1.0'
+				bat 'docker run --rm -v $(pwd)/newman:/app/results/ anushabellala/datadriventest:1.0'
             }
         }
         stage('Publish HTML Extra Report'){
