@@ -16,12 +16,12 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/naveenanimation20/July2024PostmanCollections'
+                git url: 'https://github.com/AnushaGembali/APIPostmanCollections.git'
             }
         }
         stage('Run api test cases') {
             steps {
-                sh 'newman run ./booking_coll.json  -e ./booking_env.json -n 1 -r htmlextra,cli --reporter-htmlextra-export ./results/booking_report.html'
+                sh 'newman run ./RunCollectionMultipleTimesUsingFiles/RunTestsMultipleTimesUsingFilesCol.json -d ./RunCollectionMultipleTimesUsingFiles/csvfile.csv -n 1 -r htmlextra,cli --reporter-htmlextra-export ./results/datadriventest.html'
             }
         }
         stage('Publish HTML Extra Report'){
@@ -30,7 +30,7 @@ pipeline {
                                   alwaysLinkToLastBuild: false, 
                                   keepAll: true, 
                                   reportDir: 'results', 
-                                  reportFiles: 'booking_report.html', 
+                                  reportFiles: 'datadriventest.html', 
                                   reportName: 'HTML Extra API Report', 
                                   reportTitles: ''])
             }
