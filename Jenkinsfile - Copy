@@ -14,14 +14,14 @@ pipeline {
             }
         }
 
-        stage('Pull Image from Docker') {
+        stage('Checkout') {
             steps {
-                bat 'docker pull anushabellala/datadriventest:1.0'
+                git url: 'https://github.com/AnushaGembali/APIPostmanCollections.git'
             }
         }
         stage('Run api test cases') {
             steps {
-				bat 'docker run -v %cd%\newman:/app/results/ anushabellala/datadriventest:1.0'
+                sh 'newman run ./RunCollectionMultipleTimesUsingFiles/RunTestsMultipleTimesUsingFilesCol.json -d ./RunCollectionMultipleTimesUsingFiles/csvfile.csv -n 1 -r htmlextra,cli --reporter-htmlextra-export ./results/datadriventest.html'
             }
         }
         stage('Publish HTML Extra Report'){
@@ -29,7 +29,7 @@ pipeline {
                      publishHTML([allowMissing: false,
                                   alwaysLinkToLastBuild: false, 
                                   keepAll: true, 
-                                  reportDir: 'newman', 
+                                  reportDir: 'results', 
                                   reportFiles: 'datadriventest.html', 
                                   reportName: 'HTML Extra API Report', 
                                   reportTitles: ''])
